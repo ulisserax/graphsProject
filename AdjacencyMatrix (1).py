@@ -2,151 +2,151 @@ import numpy as np
 
 class Graph:
     def __init__(self, qtVertices, directed=False, weighted=False):
-        self.tamanho = 0
-        self.ordem = qtdVertices
-        self.matriz_alcancabilidade = None
-        self.direcionado = direcionado
-        self.ponderado = ponderado
-        self.matriz_adjacencias = np.ones((qtVertices, qtVertices)) * np.inf if self.ponderado else np.zeros((qtVertices, qtVertices))
+        self.size = 0
+        self.order = qtVertices
+        self.reachability_matrix = None
+        self.directed = directed
+        self.weighted = weighted
+        self.adjancency_matrix = np.ones((qtVertices, qtVertices)) * np.inf if self.weighted else np.zeros((qtVertices, qtVertices))
 
-    def adiciona_aresta(self, u, v, peso=1):
-        assert u < self.matriz_adjacencias.shape[0] and \
-               v < self.matriz_adjacencias.shape[1], "Índice u ou v fora da matriz"
-        self.matriz_adjacencias[u,v] = peso
-        if not self.direcionado:
-            self.matriz_adjacencias[v,u] = peso
-        if not self.tem_aresta(u, v):
-            self.tamanho += 1
+    def add_edge(self, u, v, weight=1):
+        assert u < self.adjancency_matrix.shape[0] and \
+               v < self.adjancency_matrix.shape[1], "Index u or v out of matrix"
+        self.adjancency_matrix[u,v] = weight
+        if not self.directed:
+            self.adjancency_matrix[v,u] = weight
+        if not self.has_egde(u, v):
+            self.size += 1
 
-    def remove_aresta(self, u, v):
-        assert u < self.matriz_adjacencias.shape[0] and \
-               v < self.matriz_adjacencias.shape[1], "Índice u ou v fora da matriz"
-        if self.tem_aresta(u, v):
-            self.tamanho -= 1
+    def remove_edge(self, u, v):
+        assert u < self.adjancency_matrix.shape[0] and \
+               v < self.adjancency_matrix.shape[1], "Index u or v out of matrix"
+        if self.has_edge(u, v):
+            self.size -= 1
 
-        novo_valor = 0 if not self.ponderado else np.inf
-        self.matriz_adjacencias[u,v] = novo_valor
-        if not self.direcionado:
-            self.matriz_adjacencias[v,u] = novo_valor
+        new_value = 0 if not self.weighted else np.inf
+        self.adjancency_matrix[u,v] = new_value
+        if not self.directed:
+            self.adjancency_matrix[v,u] = new_value
 
-    def tem_aresta(self, u, v):
-        assert u < self.matriz_adjacencias.shape[0] and \
-               v < self.matriz_adjacencias.shape[1], "Índice u ou v fora da matriz"
-        if self.ponderado:
-            return self.matriz_adjacencias[u,v] != np.inf
-        return self.matriz_adjacencias[u,v] != 0
+    def has_edge(self, u, v):
+        assert u < self.adjancency_matrix.shape[0] and \
+               v < self.adjancency_matrix.shape[1], "Index u or v out of matrix"
+        if self.weighted:
+            return self.adjancency_matrix[u,v] != np.inf
+        return self.adjancency_matrix[u,v] != 0
 
-    def grau_entrada(self, u):
-        assert u < self.matriz_adjacencias.shape[0], "Índice u fora da matriz"
-        grau_entrada = 0
-        valor_nulo = 0 if not self.ponderado else np.inf
-        for i in range(self.ordem):
-            if self.matriz_adjacencias[i][u] != valor_nulo:
-                grau_entrada += 1
-        return grau_entrada
+    def input_degree(self, u):
+        assert u < self.adjancency_matrix.shape[0], "Index u out of matrix"
+        input_degree = 0
+        null_value = 0 if not self.weighted else np.inf
+        for i in range(self.order):
+            if self.adjancency_matrix[i][u] != null_value:
+                input_degree += 1
+        return input_degree
 
-    def grau_saida(self, u):
-        assert u < self.matriz_adjacencias.shape[0], "Índice u fora da matriz"
-        grau_saida = 0
-        valor_nulo = 0 if not self.ponderado else np.inf
-        for i in range(self.ordem):
-            if self.matriz_adjacencias[u][i] != valor_nulo:
-                grau_saida += 1
-        return grau_saida
+    def output_degree(self, u):
+        assert u < self.adjancency_matrix.shape[0], "Index u out of matrix"
+        output_degree = 0
+        null_value = 0 if not self.weighted else np.inf
+        for i in range(self.order):
+            if self.adjancency_matrix[u][i] != null_value:
+                output_degree += 1
+        return output_degree
 
-    def grau(self, u):
-        assert u < self.matriz_adjacencias.shape[0], "Índice u fora da matriz"
-        grau = 0
-        valor_nulo = 0 if not self.ponderado else np.inf
-        for i in range(self.ordem):
-            if self.matriz_adjacencias[i][u] != valor_nulo:
-                grau += 1
-            if self.ponderado:
-                if self.matriz_adjacencias[u][i] != valor_nulo:
-                    grau += 1
-        return grau
+    def degree(self, u):
+        assert u < self.adjancency_matrix.shape[0], "Index u out of matrix"
+        degree = 0
+        null_value = 0 if not self.weighted else np.inf
+        for i in range(self.order):
+            if self.adjancency_matrix[i][u] != null_value:
+                degree += 1
+            if self.weighted:
+                if self.adjancency_matrix[u][i] != null_value:
+                    degree += 1
+        return degree
 
-    def retorna_adjacentes(self, u):
-        assert u < self.matriz_adjacencias.shape[0], "Índice u fora da matriz"
-        valor_nulo = 0 if not self.ponderado else np.inf
-        return [i for i,v in enumerate(self.matriz_adjacencias[u]) if v != valor_nulo]
+    def return_adjacents(self, u):
+        assert u < self.adjancency_matrix.shape[0], "Index u out of matrix"
+        null_value = 0 if not self.weighted else np.inf
+        return [i for i,v in enumerate(self.adjancency_matrix[u]) if v != null_value]
 
-    def imprime_matriz_adjacencias(self):
-        for row in self.matriz_adjacencias:
+    def print_adjacency_matrix(self):
+        for row in self.adjancency_matrix:
             print(row)
 
     def warshall_algorithm(self):
-        if self.direcionado:
-            self.matriz_alcancabilidade = (self.matriz_adjacencias != np.inf).astype(int)
+        if self.directed:
+            self.reachability_matrix = (self.adjancency_matrix != np.inf).astype(int)
         else:
-            self.matriz_alcancabilidade = self.matriz_adjacencias.copy()
-        n = self.matriz_adjacencias.shape[0]
+            self.reachability_matrix = self.adjancency_matrix.copy()
+        n = self.adjancency_matrix.shape[0]
         for k in range(n):
             for i in range(n):
                 for j in range(n):
-                    self.matriz_alcancabilidade[i][j] = self.matriz_alcancabilidade[i][j] or \
-                                                    (self.matriz_alcancabilidade[i][k] and self.matriz_alcancabilidade[k][j])
+                    self.reachability_matrix[i][j] = self.reachability_matrix[i][j] or \
+                                                    (self.reachability_matrix[i][k] and self.reachability_matrix[k][j])
 
-    def possui_caminho(self, u, v):
-        assert u < self.matriz_adjacencias.shape[0] and \
-               v < self.matriz_adjacencias.shape[1], "Índice u ou v fora da matriz"
-        if self.matriz_alcancabilidade is None:
+    def has_path(self, u, v):
+        assert u < self.adjancency_matrix.shape[0] and \
+               v < self.adjancency_matrix.shape[1], "Index u or v out of matrix"
+        if self.reachability_matrix is None:
             self.warshall_algorithm()
 
-        return self.matriz_alcancabilidade[u][v]
+        return self.reachability_matrix[u][v]
 
     def is_Eulerian(self):
-        if self.matriz_alcancabilidade is None:
+        if self.reachability_matrix is None:
             self.warshall_algorithm()
 
-        if not np.all((self.matriz_alcancabilidade == 1)):
-            print("Não Euleriano")
+        if not np.all((self.reachability_matrix == 1)):
+            print("Non-Eulerian")
             return 0
 
         odd_count = 0
-        for u in range(self.ordem):
-            if self.direcionado:
-                print(f"Diff: {abs(self.grau_entrada(u) - self.grau_saida(u))}")
-                if abs(self.grau_entrada(u) - self.grau_saida(u)) == 1:
+        for u in range(self.order):
+            if self.directed:
+                print(f"Diff: {abs(self.input_degree(u) - self.output_degree(u))}")
+                if abs(self.input_degree(u) - self.output_degree(u)) == 1:
                     odd_count += 1
-                elif abs(self.grau_entrada(u) - self.grau_saida(u)) > 1:
-                    print("Não Euleriano")
+                elif abs(self.input_degree(u) - self.output_degree(u)) > 1:
+                    print("Non-Eulerian")
                     return 0
             else:
-                print(f"grau: {self.grau(u)}")
-                if self.grau(u) % 2 != 0:
+                print(f"degree: {self.degree(u)}")
+                if self.degree(u) % 2 != 0:
                     odd_count += 1
             if odd_count > 2:
-                print("Não Euleriano")
+                print("Non-Eulerian")
                 return 0
 
         print(odd_count)
         if odd_count == 0:
-            print("Euleriano")
+            print("Eulerian")
             return 1
         elif odd_count == 2:
-            print("Semi-Euleriano")
+            print("Semi-Eulerian")
             return 2
         else:
-            print("Não Euleriano")
+            print("Non-Eulerian")
             return 0
 
-G = Grafo(4, direcionado=True)
-G.adiciona_aresta(0,1)
-G.adiciona_aresta(1,3)
-G.adiciona_aresta(2,1)
-G.adiciona_aresta(0,2)
-G.adiciona_aresta(3,0)
-G.adiciona_aresta(1,2)
-G.adiciona_aresta(3,2)
+G = Graph(4, directed=True)
+G.add_edge(0,1)
+G.add_edge(1,3)
+G.add_edge(2,1)
+G.add_edge(0,2)
+G.add_edge(3,0)
+G.add_edge(1,2)
+G.add_edge(3,2)
 
 for i in range(4):
     for j in range(4):
-        print(f"Possui caminho entre {i} e {j}: {G.possui_caminho(i,j)}")
+        print(f"It has path between {i} e {j}: {G.has_path(i,j)}")
 
-print(G.grau_entrada(3))
-print(G.grau_saida(3))
-print(G.grau(3))
-print(G.matriz_alcancabilidade)
-G.imprime_matriz_adjacencias()
+print(G.input_degree(3))
+print(G.input_degree(3))
+print(G.degree(3))
+print(G.reachability_matrix)
+G.print_adjacency_matrix()
 print(G.is_Eulerian())
